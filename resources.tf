@@ -1,5 +1,5 @@
 
-###-keycloak
+####---keycloak
 resource "helm_release" "keycloak" {
   name       = "keycloak"
 
@@ -13,8 +13,7 @@ resource "helm_release" "keycloak" {
   depends_on = [helm_release.argocd]
 }
 
-
-###-kong
+####---kong
 resource "helm_release" "kong" {
   name       = "kong"
 
@@ -54,27 +53,49 @@ resource "helm_release" "kong" {
   depends_on = [helm_release.argocd]
 }
 
+####---vault
+resource "helm_release" "vault" {
+  chart            = "vault"
+  name             = "vault"
+  namespace        = "vault"
+  create_namespace = true
+  repository       = "https://helm.releases.hashicorp.com"
+  depends_on = [helm_release.ingress_nginx]
+  values = [
+    file("config/vault-values.yaml")
+  ]
 
-###-jenkins
-resource "helm_release" "jenkins" {
-  name       = "jenkins"
-  repository = "https://charts.jenkins.io"
-  chart      = "jenkins"
-  timeout = 900
+  set {
+    name  = "server.dev.enabled"
+    value = "true"
+  }
 
-  set_sensitive {
-    name  = "controller.adminUser"
-    value = "admin"
+  set {
+    name  = "csi.enabled"
+    value = "true"
   }
-  set_sensitive {
-    name = "controller.adminPassword"
-    value = "admin"
+
+  set {
+    name  = "injector.enabled"
+    value = "false"
   }
-  set_sensitive {
-    name = "adminPassword"
-    value = "admin"
+
+}
+
+####---csi
+resource "helm_release" "csi" {
+  chart            = "secrets-store-csi-driver"
+  name             = "secrets-store-csi-driver"
+  namespace        = "vault"
+  create_namespace = true
+  repository       = "https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"
+  depends_on = [helm_release.vault]
+  
+  set {
+    name  = "syncSecret.enabled"
+    value = "true"
   }
-  depends_on = [helm_release.argocd]
+
 }
 
 
