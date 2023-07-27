@@ -65,10 +65,10 @@ resource "helm_release" "vault" {
     file("config/vault-values.yaml")
   ]
 
-  set {
-    name  = "server.dev.enabled"
-    value = "true"
-  }
+  #set {
+  #  name  = "server.dev.enabled"
+  #  value = "true"
+  #}
 
   set {
     name  = "csi.enabled"
