@@ -1,0 +1,9 @@
+###---config
+server:
+  dev.enabled: true
+  affinity: ""
+  ha:
+    enabled: true
+    replicas: 2
+    raft:
+      enabled: false
