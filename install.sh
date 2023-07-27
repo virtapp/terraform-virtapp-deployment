@@ -76,7 +76,7 @@ terraform providers && kubectl get ing -A
 
 
              echo      "----- ............................. -----"
-             echo           "---  CLUSTER IS READY  ---"
+             echo           "---  APPS IS READY  ---"
              echo      "----- ............................. -----"
 
 
